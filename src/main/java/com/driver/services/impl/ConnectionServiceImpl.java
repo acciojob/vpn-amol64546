@@ -2,14 +2,11 @@ package com.driver.services.impl;
 
 import com.driver.model.*;
 import com.driver.repository.ConnectionRepository;
-import com.driver.repository.CountryRepository;
 import com.driver.repository.ServiceProviderRepository;
 import com.driver.repository.UserRepository;
 import com.driver.services.ConnectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.*;
 
 @Service
 public class ConnectionServiceImpl implements ConnectionService {
@@ -31,7 +28,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             throw new Exception("Already connected");
         }
 
-        if(user.getCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
+        if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
             return user;
         }
 
@@ -104,10 +101,10 @@ public class ConnectionServiceImpl implements ConnectionService {
             }
 
         }else{
-            if(sender.getCountry().equals(receiver.getCountry())){
+            if(sender.getOriginalCountry().equals(receiver.getOriginalCountry())){
                 return sender;
             }
-             receiverCountryName = receiver.getCountry().getCountryName().toString();
+             receiverCountryName = receiver.getOriginalCountry().getCountryName().toString();
         }
 
         try{

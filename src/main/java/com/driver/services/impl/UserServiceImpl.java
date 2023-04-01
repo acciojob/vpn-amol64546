@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
         country.setCode(c.toCode());
         country.setUser(user);
 
-        user.setCountry(country);
+        user.setOriginalCountry(country);
         user.setConnected(false);
         user.setOriginalIp(country.getCode()+"."+user.getId());
         user.setMaskedIp(null);
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository3.findById(userId).get();
 
         user.getServiceProviderList().add(serviceProvider);
-        serviceProvider.getUserList().add(user);
+        serviceProvider.getUsers().add(user);
 
         return user;
     }
