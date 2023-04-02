@@ -23,36 +23,30 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(String username, String password, String countryName) throws Exception{
-        CountryName c;
-        switch (countryName.toLowerCase()){
-            case "ind":
-                c = CountryName.IND;
+        CountryName countryName1=null;
+        for(CountryName c: CountryName.values()){
+            if(c.name().equalsIgnoreCase(countryName)){
+                countryName1 = c;
                 break;
-            case "aus":
-                c = CountryName.AUS;
-                break;
-            case "usa":
-                c =  CountryName.USA;
-                break;
-            case "chi":
-                c = CountryName.CHI;
-                break;
-            case "jpn":
-                c = CountryName.JPN;
-                break;
-            default:
-                throw new Exception("Country not found");
+            }
         }
+        if(countryName1==null){
+            throw new Exception("Country not found");
+        }
+
         User user = new User(username,password);
 
         Country country = new Country();
-        country.setCountryName(c);
-        country.setCode(c.toCode());
-        country.setUser(user);
+
+        country.setCountryName(countryName1);
+        country.setCode(countryName1.toCode());
+
 
         user.setConnected(false);
         user.setOriginalCountry(country);
         user.setOriginalIp(country.getCode()+"."+user.getId());
+
+        country.setUser(user);
 
         return userRepository3.save(user);
     }
@@ -65,6 +59,6 @@ public class UserServiceImpl implements UserService {
         user.getServiceProviderList().add(serviceProvider);
         serviceProvider.getUsers().add(user);
 
-        return user;
+        return userRepository3.save(user);
     }
 }

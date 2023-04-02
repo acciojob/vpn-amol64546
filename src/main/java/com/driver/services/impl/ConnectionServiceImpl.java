@@ -28,7 +28,7 @@ public class ConnectionServiceImpl implements ConnectionService {
             throw new Exception("Already connected");
         }
 
-        if(user.getOriginalCountry().getCountryName().toString().equalsIgnoreCase(countryName)){
+        if(user.getOriginalCountry().getCountryName().name().equalsIgnoreCase(countryName)){
             return user;
         }
 
@@ -38,14 +38,14 @@ public class ConnectionServiceImpl implements ConnectionService {
 
         for(ServiceProvider s: user.getServiceProviderList()){
             for(Country c: s.getCountryList())
-                if(c.getCountryName().toString().equalsIgnoreCase(countryName) && minId>c.getId()){
+                if(c.getCountryName().name().equalsIgnoreCase(countryName) && minId>c.getId()){
                     country = c;
                     minId = c.getId();
                     serviceProvider1 = s;
                 }
         }
 
-        if(user.getServiceProviderList().isEmpty() || serviceProvider1==null){
+        if(minId == Integer.MAX_VALUE){
             throw new Exception("Unable to connect");
         }
 
@@ -59,6 +59,7 @@ public class ConnectionServiceImpl implements ConnectionService {
         user.getConnectionList().add(connection);
         user.setMaskedIp( country.getCode() +"."+serviceProvider1.getId()+"."+user.getId());
 
+        serviceProviderRepository2.save(serviceProvider1);
         return userRepository2.save(user);
     }
     @Override
@@ -77,33 +78,27 @@ public class ConnectionServiceImpl implements ConnectionService {
     public User communicate(int senderId, int receiverId) throws Exception {
         User sender = userRepository2.findById(senderId).get();
         User receiver = userRepository2.findById(receiverId).get();
+
         String receiverCountryName = "";
+
         if(receiver.getConnected()){
             String receiverCountryCode = receiver.getMaskedIp().substring(0,3);
 
-            switch (receiverCountryCode){
-                case "001":
-                    receiverCountryName = "ind";
+            CountryName countryName1=null;
+            for(CountryName c: CountryName.values()){
+                if(c.toCode().equals(receiverCountryCode)){
+                    receiverCountryName = c.name();
                     break;
-                case "003":
-                    receiverCountryName = "aus";
-                    break;
-                case "002":
-                    receiverCountryName =  "usa";
-                    break;
-                case "004":
-                    receiverCountryName = "chi";
-                    break;
-                case "005":
-                    receiverCountryName = "jpn";
-
+                }
             }
+
 
         }else{
-            if(sender.getOriginalCountry().equals(receiver.getOriginalCountry())){
-                return sender;
-            }
              receiverCountryName = receiver.getOriginalCountry().getCountryName().toString();
+        }
+
+        if(sender.getOriginalCountry().equals(receiver.getOriginalCountry())){
+            return sender;
         }
 
         try{
