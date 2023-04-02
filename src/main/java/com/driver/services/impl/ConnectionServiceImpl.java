@@ -60,7 +60,8 @@ public class ConnectionServiceImpl implements ConnectionService {
         user.setMaskedIp( country.getCode() +"."+serviceProvider1.getId()+"."+user.getId());
 
         serviceProviderRepository2.save(serviceProvider1);
-        return userRepository2.save(user);
+        userRepository2.save(user);
+        return user;
     }
     @Override
     public User disconnect(int userId) throws Exception {
@@ -71,7 +72,8 @@ public class ConnectionServiceImpl implements ConnectionService {
         }
         user.setMaskedIp(null);
         user.setConnected(false);
-        return userRepository2.save(user);
+        userRepository2.save(user);
+        return user;
 
     }
     @Override

@@ -47,8 +47,9 @@ public class UserServiceImpl implements UserService {
         user.setOriginalIp(country.getCode()+"."+user.getId());
 
         country.setUser(user);
+        userRepository3.save(user);
 
-        return userRepository3.save(user);
+        return user;
     }
 
     @Override
@@ -58,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
         user.getServiceProviderList().add(serviceProvider);
         serviceProvider.getUsers().add(user);
-
-        return userRepository3.save(user);
+        userRepository3.save(user);
+        return user;
     }
 }
